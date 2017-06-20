@@ -26,7 +26,8 @@ RUN export VERSION="$( /usr/bin/dpkg-parsechangelog --show-field Version | cut -
 COPY . .
 
 # CFLAGS appear to be added by dpkg-buildpackage
-RUN export DEB_CFLAGS_STRIP='-O2' DEB_CXXFLAGS_STRIP='-O2' \
+RUN patch -p0 <debian/patches/lto-link-flags.diff \
+    && export DEB_CFLAGS_STRIP='-O2' DEB_CXXFLAGS_STRIP='-O2' \
     && dpkg-buildflags \
     && DEB_BUILD_OPTIONS="parallel=$(nproc) nocheck" dpkg-buildpackage -B
 
